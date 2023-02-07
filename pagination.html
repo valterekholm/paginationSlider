@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pagination123</title>
+<style>
+html *{
+	box-sizing: border-box;
+}
+
+.content{
+	padding: 10px;
+	overflow: hidden;
+	width:500px;
+	margin: 0 auto;
+	border: 1px solid gray;
+	font-size: 30px;
+}
+.pagination{
+	border: 1px solid red;
+	height: 70px;
+	width:100%;
+	overflow: hidden;
+	display: flex;
+}
+
+.pagination button{
+	display: inline-block;
+}
+
+.inlBl{
+	display: inline-block;
+}
+
+ol, ul{
+	list-style-type: none;
+}
+li{
+	display: inline;
+}
+
+.pagination ol, .pagination ul{
+	margin: 0;
+	padding:0;
+}
+
+.pagination form{
+}
+
+.scrollPagin{
+	width: 300px;
+	display: inline-block;
+	display: flow-root;
+	overflow: scroll;
+}
+
+.scrollPagin>div{
+	display:block;
+}
+
+.longHolder{
+	width:1000px;
+}
+
+</style>
+</head>
+<body>
+<div class="content" id="content" style="">
+
+<div id="innerContent" style="background: orange; width:100%; height: 300px;">
+hej
+</div>
+<form>
+<label for="range_01">&nbsp;</label>
+<input type="range" id="range_01" title="slide01" min="-50" max="50" value="0">
+<form>
+<div class="pagination"><button id="prev">Föregående</button><div class="scrollPagin" id="scrollPagin">
+
+
+
+<div class="longHolder" style="" id="longHolder">
+<ol id="pageLinks">
+<li><button id="btn_01">1</span></button></li>
+<li><button id="btn_02">2</span></button></li>
+<li><button id="btn_03">3</span></button></li>
+<li><button id="btn_04">4</span></button></li>
+<li><button id="btn_05">5</span></button></li>
+<li><button id="btn_06">6</span></button></li>
+<li><button id="btn_07">7</span></button></li>
+<li><button id="btn_08">8</span></button></li>
+<li><button id="btn_09">9</span></button></li>
+<li><button id="btn_10">10</span></button></li>
+<li><button id="btn_11">11</span></button></li>
+<li><button id="btn_12">12</span></button></li>
+<li><button id="btn_13">13</span></button></li>
+<li><button id="btn_14">14</span></button></li>
+</ol>
+</div>
+</div><button id="next">Nästa</button></div>
+</div>
+
+<script>
+
+scrollX = 0; //
+myInterval = "x";
+INTERVAL = 100;
+pageNumber = 1;
+
+window.onload = function(){
+	initPagination();
+	initButtons();
+	myInterval = initInterval();
+
+}
+
+function initPagination(){
+	let slider = document.querySelector("#range_01");
+	slider.addEventListener("input", function(ev){
+		//inp
+		console.log(this.value);
+		scrollX = this.value;
+		console.log("scrollX: " + scrollX);
+	});
+
+	slider.addEventListener("mouseup", function(ev){
+		//inp
+		setTimeout(function(){
+			resetSliderPartly();
+		}, 1000);
+	});
+
+}
+
+function resetSlider(){
+	let slider = document.querySelector("#range_01");
+	slider.value = 0;
+	scrollX = 0;
+}
+
+function resetSliderPartly(){
+	let slider = document.querySelector("#range_01");
+	intVal = parseInt(slider.value);
+	intVal = parseInt(intVal/2); //to round down (to zero eventually)
+	
+	slider.value = intVal;
+	scrollX = intVal;
+
+	if(intVal != 0){
+		setTimeout(resetSliderPartly, INTERVAL);
+	}
+	else{
+		scrollX = 0;
+	}
+}	
+
+function movePagination(){
+	let holder = document.querySelector("#scrollPagin");
+	holder.scrollLeft = holder.scrollLeft + (scrollX/2);
+	console.log(holder.scrollLeft);
+}
+
+function initInterval(){
+	return setInterval(function(){
+		movePagination();
+	}, INTERVAL);
+}
+
+function initButtons(){
+
+let btns = document.getElementsByTagName("button");
+let lenb = btns.length;
+
+for(let i=0; i< lenb; i++){
+	btns[i].addEventListener("click", function(e){
+		e.preventDefault();
+		}
+	)
+}
+
+
+let prev = document.querySelector("#prev");
+let next = document.querySelector("#next");
+
+prev.addEventListener("click", function(){
+	pageNumber--;
+	if(pageNumber < 1) pageNumber = 1;
+	updateContent();
+});
+
+next.addEventListener("click", function(){
+	pageNumber++;
+	updateContent();
+	//scroll into view
+});
+
+
+let pl = document.querySelector("#pageLinks");
+
+let links = pl.childNodes;
+let lenl = links.length;
+
+for(let i=0; i<lenl; i++){
+	links[i].addEventListener("click", function(){pageNumber = parseInt(this.firstChild.innerHTML); updateContent()});
+}
+
+}
+
+function updateContent(){
+	document.querySelector("#innerContent").innerHTML = "PAGE " + pageNumber;
+	let leadingZero = pageNumber < 10 ? "0" : "";
+	let btnId = "btn_" + leadingZero + pageNumber;
+	let focusButton = document.querySelector("#" + btnId);
+	focusButton.focus();
+	focusButton.scrollIntoView();
+}
+
+</script>
+
+</body>
+</html>

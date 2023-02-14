@@ -19,8 +19,8 @@ html *{
 }
 .pagination{
 	border: 1px solid red;
-	height: 70px;
-	width:100%;
+	height: 50px;
+	width: 100%;
 	overflow: hidden;
 	display: flex;
 }
@@ -49,10 +49,10 @@ li{
 }
 
 .scrollPagin{
-	width: 300px;
+	width: auto;
 	display: inline-block;
 	display: flow-root;
-	overflow: scroll;
+	overflow: hidden;
 }
 
 .scrollPagin>div{
@@ -60,7 +60,7 @@ li{
 }
 
 .longHolder{
-	width:1000px;
+	width:100px;
 }
 
 </style>
@@ -75,27 +75,11 @@ hej
 <label for="range_01">&nbsp;</label>
 <input type="range" id="range_01" title="slide01" min="-50" max="50" value="0">
 <form>
-<div class="pagination"><button id="prev">Föregående</button><div class="scrollPagin" id="scrollPagin">
-
-
-
-<div class="longHolder" style="" id="longHolder">
+<div class="pagination" id="pagination"><button id="prev">Föregående</button><div class="scrollPagin" id="scrollPagin">
+<div class="longHolder" style="width:100px" id="longHolder">
+<!-- only elements own style/css is recognized by js -->
 <ol id="pageLinks">
-<li><button id="btn_01">1</span></button></li>
-<li><button id="btn_02">2</span></button></li>
-<li><button id="btn_03">3</span></button></li>
-<li><button id="btn_04">4</span></button></li>
-<li><button id="btn_05">5</span></button></li>
-<li><button id="btn_06">6</span></button></li>
-<li><button id="btn_07">7</span></button></li>
-<li><button id="btn_08">8</span></button></li>
-<li><button id="btn_09">9</span></button></li>
-<li><button id="btn_10">10</span></button></li>
-<li><button id="btn_11">11</span></button></li>
-<li><button id="btn_12">12</span></button></li>
-<li><button id="btn_13">13</span></button></li>
-<li><button id="btn_14">14</span></button></li>
-</ol>
+<li><button id="btn_01">1</span></button></li><li><button id="btn_02">2</span></button></li><li><button id="btn_03">3</span></button></li><li><button id="btn_04">4</span></button></li><li><button id="btn_05">5</span></button></li><li><button id="btn_06">6</span></button></li><li><button id="btn_07">7</span></button></li><li><button id="btn_08">8</span></button></li><li><button id="btn_09">9</span></button></li><li><button id="btn_10">10</span></button></li><li><button id="btn_11">11</span></button></li><li><button id="btn_12">12</span></button></li><li><button id="btn_13">13</span></button></li><li><button id="btn_14">14</span></button></li></ol>
 </div>
 </div><button id="next">Nästa</button></div>
 </div>
@@ -106,12 +90,18 @@ scrollX = 0; //
 myInterval = "x";
 INTERVAL = 100;
 pageNumber = 1;
+maxPage = 0;
 
 window.onload = function(){
+	addLiButtonsRange(document.querySelector("ol"), 15, 10); //adding some buttons/'pages'
+
+	findMaxPage();
+
 	initPagination();
 	initButtons();
 	myInterval = initInterval();
 
+	growDivPagin(document.querySelector("#scrollPagin"));
 }
 
 function initPagination(){
@@ -120,7 +110,7 @@ function initPagination(){
 		//inp
 		console.log(this.value);
 		scrollX = this.value;
-		console.log("scrollX: " + scrollX);
+		//console.log("scrollX: " + scrollX);
 	});
 
 	slider.addEventListener("mouseup", function(ev){
@@ -157,7 +147,7 @@ function resetSliderPartly(){
 function movePagination(){
 	let holder = document.querySelector("#scrollPagin");
 	holder.scrollLeft = holder.scrollLeft + (scrollX/2);
-	console.log(holder.scrollLeft);
+	//console.log(holder.scrollLeft);
 }
 
 function initInterval(){
@@ -189,9 +179,11 @@ prev.addEventListener("click", function(){
 });
 
 next.addEventListener("click", function(){
-	pageNumber++;
-	updateContent();
-	//scroll into view
+	if(pageNumber < maxPage){
+		pageNumber++;
+		updateContent();
+		//scroll into view
+	}
 });
 
 
@@ -202,17 +194,74 @@ let lenl = links.length;
 
 for(let i=0; i<lenl; i++){
 	links[i].addEventListener("click", function(){pageNumber = parseInt(this.firstChild.innerHTML); updateContent()});
-}
-
+	}
 }
 
 function updateContent(){
 	document.querySelector("#innerContent").innerHTML = "PAGE " + pageNumber;
-	let leadingZero = pageNumber < 10 ? "0" : "";
-	let btnId = "btn_" + leadingZero + pageNumber;
+	let btnId = "btn_" + getNumberWithLeadingZero(pageNumber);
 	let focusButton = document.querySelector("#" + btnId);
-	focusButton.focus();
-	focusButton.scrollIntoView();
+	if(focusButton != null){
+		focusButton.focus();
+		focusButton.scrollIntoView();
+	}
+}
+
+//00-99
+function getNumberWithLeadingZero(number){
+	if(number < 0) return number;
+	let leadingZero = (number < 10 && number >= 0) ? "0" : "";
+	return leadingZero + number;
+}
+
+function makeMockButton(index){
+	let btn = document.createElement("button");
+	btn.innerHTML = index;
+	btn.id = "btn_" + getNumberWithLeadingZero(index);
+	return btn;
+}
+
+function wrapElementInEmptyElement(elem, wrapElemName){
+	let wrapElem = document.createElement(wrapElemName);
+	wrapElem.appendChild(elem);
+	return wrapElem;
+}
+
+function addLiButtonsRange(parent, startIndex, count){
+	if(count < 0) return false;
+
+	for(let i=startIndex; i< startIndex+count; i++){
+		parent.appendChild(wrapElementInEmptyElement(makeMockButton(i), "li"));
+	}
+}
+
+function growDivPagin(paginDiv){
+
+	let longHolder = document.querySelector("#longHolder");
+	console.log(longHolder.style);
+	let hasVerticalScrollbar = paginDiv.scrollHeight > paginDiv.clientHeight;
+	let count=0;
+	while(hasVerticalScrollbar && count<1000){
+		increaseElementWidthPx(longHolder);
+		hasVerticalScrollbar = paginDiv.scrollHeight > paginDiv.clientHeight;
+		count++;
+	}
+}
+
+function increaseElementWidthPx(elem){
+	//console.log(elem.style.width);
+	let widthPx = parseInt(elem.style.width);
+	//console.log(widthPx);
+	widthPx++;
+	elem.style.width = widthPx + "px";
+}
+
+function findMaxPage(){
+
+	let pageLinks = document.querySelector("#pageLinks");
+	let pageButtons = pageLinks.getElementsByTagName("li");
+	//console.log(pageButtons.length);
+	maxPage = pageButtons.length;
 }
 
 </script>

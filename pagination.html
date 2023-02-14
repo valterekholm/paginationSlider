@@ -15,6 +15,11 @@ html *{
 	width:500px;
 	margin: 0 auto;
 	border: 1px solid gray;
+}
+#innerContent{
+	background: orange;
+	width:100%;
+	height: 300px;
 	font-size: 30px;
 }
 .pagination{
@@ -23,6 +28,7 @@ html *{
 	width: 100%;
 	overflow: hidden;
 	display: flex;
+	font-size: 30px;/*strangely, this affects the positioning of the button-range, makes it single row'ed, if omitted I get two rows*/
 }
 
 .pagination button{
@@ -45,7 +51,8 @@ li{
 	padding:0;
 }
 
-.pagination form{
+form#slider{
+	display: flex;
 }
 
 .scrollPagin{
@@ -68,13 +75,15 @@ li{
 <body>
 <div class="content" id="content" style="">
 
-<div id="innerContent" style="background: orange; width:100%; height: 300px;">
+<div id="innerContent">
 hej
 </div>
-<form>
+<form id="slider">
 <label for="range_01">&nbsp;</label>
 <input type="range" id="range_01" title="slide01" min="-50" max="50" value="0">
-<form>
+<label for="infoBox">Info:</label>
+<input type="text" id="infoBox" disabled>
+</form>
 <div class="pagination" id="pagination"><button id="prev">Föregående</button><div class="scrollPagin" id="scrollPagin">
 <div class="longHolder" style="width:100px" id="longHolder">
 <!-- only elements own style/css is recognized by js -->
@@ -86,9 +95,9 @@ hej
 
 <script>
 
-scrollX = 0; //
+scrollX = 0; //the position of slider
 myInterval = "x";
-INTERVAL = 100;
+INTERVAL = 80;
 pageNumber = 1;
 maxPage = 0;
 
@@ -118,7 +127,7 @@ function initPagination(){
 		//inp
 		setTimeout(function(){
 			resetSliderPartly();
-		}, 200);
+		}, 100);
 	});
 
 }
@@ -147,7 +156,7 @@ function resetSliderPartly(){
 
 function movePagination(){
 	let holder = document.querySelector("#scrollPagin");
-	holder.scrollLeft = holder.scrollLeft + (scrollX/2);
+	holder.scrollLeft = holder.scrollLeft + parseInt(scrollX);
 	//console.log(holder.scrollLeft);
 }
 
@@ -265,6 +274,11 @@ function findMaxPage(){
 	let pageButtons = pageLinks.getElementsByTagName("li");
 	//console.log(pageButtons.length);
 	maxPage = pageButtons.length;
+	setInfo("Number of pages " + maxPage);
+}
+
+function setInfo(text){
+	document.querySelector("#infoBox").value = text;
 }
 
 </script>

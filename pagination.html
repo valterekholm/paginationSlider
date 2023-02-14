@@ -245,17 +245,17 @@ function growDivPagin(paginDiv){
 	let hasVerticalScrollbar = paginDiv.scrollHeight > paginDiv.clientHeight;
 	let count=0;
 	while(hasVerticalScrollbar && count < forcedCountLimit){
-		increaseElementWidthPx(longHolder);
+		increaseElementWidthPx(longHolder, 2);
 		hasVerticalScrollbar = paginDiv.scrollHeight > paginDiv.clientHeight;
 		count++;
 	}
 }
 
-function increaseElementWidthPx(elem){
+function increaseElementWidthPx(elem, pixelStep){
 	//console.log(elem.style.width);
 	let widthPx = parseInt(elem.style.width);
 	//console.log(widthPx);
-	widthPx++;
+	widthPx += pixelStep;
 	elem.style.width = widthPx + "px";
 }
 

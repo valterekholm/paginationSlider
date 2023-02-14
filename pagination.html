@@ -53,6 +53,16 @@ li{
 
 form#slider{
 	display: flex;
+	padding: 3px;
+}
+
+form#slider>*{
+	margin-right: 10px;
+	text-transform: uppercase;
+	padding-top: 2px;
+}
+form#slider>div{
+	float: right;
 }
 
 .scrollPagin{
@@ -70,6 +80,13 @@ form#slider{
 	width:100px;
 }
 
+.longHolder button{
+}
+.longHolder button:focus{
+	font-weight: bold;
+	background-color: #fff;
+}
+
 </style>
 </head>
 <body>
@@ -81,8 +98,10 @@ hej
 <form id="slider">
 <label for="range_01">&nbsp;</label>
 <input type="range" id="range_01" title="slide01" min="-50" max="50" value="0">
+<div>
 <label for="infoBox">Info:</label>
 <input type="text" id="infoBox" disabled>
+</div>
 </form>
 <div class="pagination" id="pagination"><button id="prev">Föregående</button><div class="scrollPagin" id="scrollPagin">
 <div class="longHolder" style="width:100px" id="longHolder">
@@ -258,6 +277,9 @@ function growDivPagin(paginDiv){
 		hasVerticalScrollbar = paginDiv.scrollHeight > paginDiv.clientHeight;
 		count++;
 	}
+
+	//some extra
+	increaseElementWidthPx(longHolder, 8);
 }
 
 function increaseElementWidthPx(elem, pixelStep){

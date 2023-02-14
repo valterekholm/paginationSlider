@@ -93,7 +93,8 @@ pageNumber = 1;
 maxPage = 0;
 
 window.onload = function(){
-	addLiButtonsRange(document.querySelector("ol"), 15, 10); //adding some buttons/'pages'
+	let addedExtraButtonsCount = 100;
+	addLiButtonsRange(document.querySelector("ol"), 15, addedExtraButtonsCount); //adding some buttons/'pages'
 
 	findMaxPage();
 
@@ -237,11 +238,13 @@ function addLiButtonsRange(parent, startIndex, count){
 
 function growDivPagin(paginDiv){
 
+	const forcedCountLimit = 100000;
+
 	let longHolder = document.querySelector("#longHolder");
 	console.log(longHolder.style);
 	let hasVerticalScrollbar = paginDiv.scrollHeight > paginDiv.clientHeight;
 	let count=0;
-	while(hasVerticalScrollbar && count<1000){
+	while(hasVerticalScrollbar && count < forcedCountLimit){
 		increaseElementWidthPx(longHolder);
 		hasVerticalScrollbar = paginDiv.scrollHeight > paginDiv.clientHeight;
 		count++;
